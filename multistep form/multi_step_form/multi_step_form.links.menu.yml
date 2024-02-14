@@ -1,0 +1,6 @@
+multi_step_form.menu:
+  title: 'Multi Step Form'
+  description: 'Multi step Form'
+  route_name:  multi_step_form.multistep_form
+  parent: system.admin_config_ui
+  weight: 13

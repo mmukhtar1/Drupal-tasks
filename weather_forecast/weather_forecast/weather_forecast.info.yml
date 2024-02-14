@@ -1,0 +1,5 @@
+name: 'Local Weather Forecast'
+type: module
+description: 'Returns a weather forecast for a user provided city.'
+package: 'Custom'
+core_version_requirement: ^9 || ^10

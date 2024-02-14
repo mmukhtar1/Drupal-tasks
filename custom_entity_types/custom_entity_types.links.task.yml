@@ -1,0 +1,22 @@
+entity.custom_entity_types.settings:
+  title: 'Settings'
+  route_name: entity.custom_entity_types.settings
+  base_route: entity.custom_entity_types.settings
+entity.custom_entity_types.view:
+  title: 'View'
+  route_name: entity.custom_entity_types.canonical
+  base_route: entity.custom_entity_types.canonical
+entity.custom_entity_types.edit_form:
+  title: 'Edit'
+  route_name: entity.custom_entity_types.edit_form
+  base_route: entity.custom_entity_types.canonical
+entity.custom_entity_types.delete_form:
+  title: 'Delete'
+  route_name: entity.custom_entity_types.delete_form
+  base_route: entity.custom_entity_types.canonical
+  weight: 10
+entity.custom_entity_types.collection:
+  title: 'Custom entity types'
+  route_name: entity.custom_entity_types.collection
+  base_route: system.admin_content
+  weight: 10

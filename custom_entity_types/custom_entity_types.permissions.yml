@@ -1,0 +1,11 @@
+administer custom_entity_types:
+  title: 'Administer custom entity typess'
+  restrict access: true
+view custom_entity_types:
+  title: 'View custom entity types'
+edit custom_entity_types:
+  title: 'Edit custom entity types'
+delete custom_entity_types:
+  title: 'Delete custom entity types'
+create custom_entity_types:
+  title: 'Create custom entity types'

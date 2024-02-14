@@ -1,0 +1,5 @@
+name: 'multi_step_form'
+type: module
+description: 'Multi Step Form'
+package: Custom
+core_version_requirement: ^9 || ^10

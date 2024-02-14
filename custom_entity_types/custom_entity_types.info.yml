@@ -1,0 +1,5 @@
+name: 'custom_entity_types'
+type: module
+description: 'Custom entity Created via Entity API'
+package: Custom
+core_version_requirement: ^10
