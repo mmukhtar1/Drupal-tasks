@@ -44,24 +44,24 @@ class ForecastService {
   public function getByCity($city, $cnt) {
     // get data via http://openweathermap.org/api
     /* @var \GuzzleHttp\Message\Response $result */
-    $request = $this->client->get(
-      'https://api.openweathermap.org/data/2.5/forecast',
-      [
-        'query' => [
-          'q' => $city . ",us",
-          'appid' => $this->api_key,
-          'cnt' => $cnt,
-          'units' => 'metric',
-        ],
-      ]
-    );
-    try {
-      if (200 == $request->getStatusCode()) {
-        $forecast = json_decode($request->getBody());
-      }
-      return $forecast;
-    } catch (\Exception $e) {
-      \Drupal::messenger()->addMessage(t("Could not get a forecast for $city, please try again later:" . $e->getMessage()), 'error');
-    }
+    // $request = $this->client->get(
+    //   'https://api.openweathermap.org/data/2.5/forecast',
+    //   [
+    //     'query' => [
+    //       'q' => $city . ",us",
+    //       'appid' => $this->api_key,
+    //       'cnt' => $cnt,
+    //       'units' => 'metric',
+    //     ],
+    //   ]
+    // );
+    // try {
+    //   if (200 == $request->getStatusCode()) {
+    //     $forecast = json_decode($request->getBody());
+    //   }
+    //   return $forecast;
+    // } catch (\Exception $e) {
+    //   \Drupal::messenger()->addMessage(t("Could not get a forecast for $city, please try again later:" . $e->getMessage()), 'error');
+    // }
   }
 }

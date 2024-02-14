@@ -10,6 +10,6 @@ weather_forecast.show_weather_forecast:
   path: '/weather-forecast/show-weather-forcast'
   defaults:
     _title: 'Weather forecast'
-    _controller: '\Drupal\weather_forecast\Controller\LocalWeatherForecastController::show_forecast'
+    _controller: '\Drupal\weather_forecast\Controller\WeatherForecastController::show_forecast'
   requirements:
     _permission: 'access content'

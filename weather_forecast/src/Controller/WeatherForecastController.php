@@ -9,7 +9,7 @@ use Drupal\Core\Controller\ControllerBase;
 /**
  * Returns responses for Local Weather Forecast routes.
  */
-final class LocalWeatherForecastController extends ControllerBase
+final class WeatherForecastController extends ControllerBase
 {
 
   /**
