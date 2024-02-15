@@ -1,6 +1,10 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 use Drupal\views\ViewExecutable;
+use Drupal\Core\Render\Markup;
+
 
 /**
  * @file
@@ -10,9 +14,47 @@ use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_views_pre_view().
+ * Add custom html to the header
  */
 
-function advanced_view_views_pre_view(ViewExecutable $view, $display_id, array &$args) {
+function advanced_view_views_pre_view(ViewExecutable $view, $display_id, array &$args)
+{
   if ($view->id() == 'views_aggregation_advanced' && $display_id === 'page_1') {
+    //Get the number of articles published
+    $query_articles_published = \Drupal::entityQuery('node')
+      ->condition('status', 1)
+      ->condition('type', 'article');
+    $query_articles_published->accessCheck(TRUE);
+    $count1 = $query_articles_published->count()->execute();
+
+    //Get the number of articles unpublished
+    $query_articles_unpublished = \Drupal::entityQuery('node')
+      ->condition('status', 0)
+      ->condition('type', 'article');
+    $query_articles_unpublished->accessCheck(TRUE);
+    $count2 = $query_articles_unpublished->count()->execute();
+
+    $total = (int)$count1 + (int)$count2;
+
+    $markup = Markup::create("
+ <div class='messages'>
+ <span> No. of articles published: $count1 <span><br/> 
+ <span> No. of articles unpublished: $count2 <span><br/> 
+ <span> Total: $total
+ </div>");
+
+    $options = array(
+      'id' => 'area_text_custom',
+      'table' => 'views',
+      'field' => 'area_text_custom',
+      'relationship' => 'none',
+      'group_type' => 'none',
+      'admin_label' => '',
+      'empty' => TRUE,
+      'tokenize' => FALSE,
+      'content' => $markup,
+      'plugin_id' => 'text_custom',
+    );
+    $view->setHandler('page_1', 'header', 'area_text_custom', $options);
   }
 }

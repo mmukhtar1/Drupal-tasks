@@ -1,0 +1,71 @@
+<table class="views-table cols-7">
+    <thead>
+        <tr>
+            <th id="view-title-table-column" class="views-field views-field-title" scope="col">Title</th>
+            <th id="view-type-table-column" class="views-field views-field-type" scope="col">Content type</th>
+            <th id="view-body-table-column" class="views-field views-field-body" scope="col">Body</th>
+            <th id="view-field-image-table-column" class="views-field views-field-field-image" scope="col">Image</th>
+            <th id="view-timestamp-table-column" class="views-field views-field-timestamp" scope="col">Most recent view
+            </th>
+            <th id="view-totalcount-table-column" class="views-field views-field-totalcount" scope="col">Total views
+            </th>
+            <th id="view-daycount-table-column" class="views-field views-field-daycount" scope="col">Views today</th>
+            <th id="view-daycount-table-column" class="views-field views-field-commentcount" scope="col">Comment count</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        {% for key, row in rows %}
+        {% set text = view.field.body.value(view.result[key]) %}
+        {% set column = row.columns %}
+        <tr>
+            <td>
+                {% if view.field.title.value(view.result[key]) %}
+                    <a href="/node/{{view.result[key].nid}}">{{ view.field.title.value(view.result[key]) }}</a>
+                {% endif %}
+            </td>
+            <td>
+                {% if view.field.type.value(view.result[key]) %}
+                    {{ view.field.type.value(view.result[key]) }}
+                {% endif %}
+            </td>
+            <td>
+                {% if view.field.body.value(view.result[key]) %}
+                {{ text|length > 200 ? text|slice(0, 100) ~ '...' : text }}
+                {% endif %}
+            </td>
+            <td>
+                {% if view.field.field_image.value(view.result[key]) %}
+                    {{ fields.field_image.content }}
+                {% endif %}
+            </td>
+            <td>
+                {% if view.field.timestamp.value(view.result[key]) %}
+                {{ view.field.timestamp.value(view.result[key]) | date("d/m/Y H:i:s") }}
+                {% endif %}
+            </td>
+            <td>
+                {% if view.field.totalcount.value(view.result[key]) is empty %}
+                    0
+                {% else %}
+                 {{ view.field.totalcount.value(view.result[key]) }}
+                {% endif %}
+            </td>
+            <td>
+                {% if view.field.daycount.value(view.result[key]) is empty %}
+                    0
+                {% else %}
+                    {{ view.field.daycount.value(view.result[key]) }}
+                {% endif %}
+            </td>
+            <td>
+                {% if view.field.comment_count.value(view.result[key]) is empty %}
+                    0
+                {% else %}
+                    {{ view.field.comment_count.value(view.result[key]) }}
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
