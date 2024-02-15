@@ -1,0 +1,79 @@
+<?php
+
+declare(strict_types=1);
+
+use Drupal\views\ViewExecutable;
+use Drupal\Core\Render\Markup;
+
+/**
+ * @file
+ * Functions to support theming in the Olivero Extended theme.
+ */
+
+/**
+ * Implements hook_preprocess_HOOK() for html.html.twig.
+ */
+function olivero_extended_preprocess_html(array &$variables): void
+{
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for page.html.twig.
+ */
+function olivero_extended_preprocess_page(array &$variables): void
+{
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for node.html.twig.
+ */
+function olivero_extended_preprocess_node(array &$variables): void
+{
+}
+
+/**
+ * Implements hook_views_pre_render
+ */
+function olivero_extended_views_pre_render(ViewExecutable $view)
+{
+    switch ($view->id()) {
+        case 'views_aggregation_advanced':
+            //  override the global custom text field value
+            // $view->display['page_1']->handler->handlers['header']['area_text_custom']->options['content'] = "CUstom header text";
+            break;
+    }
+}
+
+
+/**
+ * Add custom html to the header
+ * Implements template_preprocess_views_view().
+ */
+function olivero_extended_preprocess_views_view(&$vars){
+    $view = $vars["view"];
+    if ($view->storage->id() == 'views_aggregation_advanced') {
+        //Get the number of articles published
+        $query_articles_published = \Drupal::entityQuery('node')
+            ->condition('status', 1)
+            ->condition('type', 'article');
+        $query_articles_published->accessCheck(TRUE);
+        $count1 = $query_articles_published->count()->execute();
+
+        //Get the number of articles unpublished
+        $query_articles_unpublished = \Drupal::entityQuery('node')
+            ->condition('status', 0)
+            ->condition('type', 'article');
+        $query_articles_unpublished->accessCheck(TRUE);
+        $count2 = $query_articles_unpublished->count()->execute();
+
+        $total = (int)$count1 + (int)$count2;
+
+        $markup = Markup::create("
+      <div class='messages'>
+      <span> No. of articles published: $count1 <span><br/> 
+      <span> No. of articles unpublished: $count2 <span><br/> 
+      <span> Total: $total
+      </div>");
+        $vars['header'] = $markup;
+    }
+}

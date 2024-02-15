@@ -1,0 +1,32 @@
+.views-table {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.views-table td,
+.views-table th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.views-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.views-table tr:hover {
+    background-color: #ddd;
+}
+
+.views-table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #04AA6D;
+    color: white;
+}
+
+.views-table td, .views-table thead tr th {
+    text-align: center; 
+    vertical-align: middle;
+}

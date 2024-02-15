@@ -1,0 +1,18 @@
+<?php declare(strict_types = 1);
+
+use Drupal\views\ViewExecutable;
+
+/**
+ * @file
+ * Primary module hooks for Advanced view module.
+ */
+
+
+/**
+ * Implements hook_views_pre_view().
+ */
+
+function advanced_view_views_pre_view(ViewExecutable $view, $display_id, array &$args) {
+  if ($view->id() == 'views_aggregation_advanced' && $display_id === 'page_1') {
+  }
+}
