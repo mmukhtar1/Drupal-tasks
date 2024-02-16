@@ -1,0 +1,5 @@
+name: 'custom_block_plugin'
+type: module
+description: 'Custom block plugin to show the data from external API'
+package: Custom
+core_version_requirement: ^10

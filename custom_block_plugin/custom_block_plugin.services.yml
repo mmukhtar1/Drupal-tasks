@@ -1,0 +1,4 @@
+services:
+  custom_block_plugin.stock_market_service:
+    class: Drupal\custom_block_plugin\Service\StockMarketService
+    arguments: ['@http_client']

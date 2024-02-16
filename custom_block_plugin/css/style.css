@@ -1,0 +1,54 @@
+#stock-table {
+  font-family: 'Times New Roman', serif;
+  border-collapse: collapse;
+  width: 50%;
+}
+
+#stock-table td,
+#stock-table th {
+  border: 2px solid black;
+  padding: 8px;
+}
+
+#stock-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+#stock-table tr:hover {
+  background-color: #ddd;
+}
+
+#stock-table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #04aa6d;
+  color: white;
+}
+
+#stock-table td,
+#stock-table thead tr th {
+  text-align: center;
+  vertical-align: middle;
+}
+#stock-table thead tr th .up_arrow {
+  width: 0;
+  height: 0;
+  border-bottom: 10px solid green;
+  border-right: 10px solid transparent;
+  border-left: 10px solid transparent;
+  font-size: 0;
+  line-height: 0;
+  float: right;
+}
+
+#stock-table thead tr th .down_arrow {
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid red;
+  font-size: 0;
+  line-height: 0;
+  float: right;
+}

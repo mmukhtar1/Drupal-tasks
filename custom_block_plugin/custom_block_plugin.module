@@ -1,0 +1,36 @@
+<?php
+
+/**
+ * @file
+ * Contains custom_block_plugin.module.
+ */
+
+/**
+ * Implements hook_help().
+ */
+function custom_block_plugin_help($route_name) {
+  switch ($route_name) {
+    // Main module help for the local_weather_forecast module.
+    case 'help.page.custom_block_plugin':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Returns the stock market data that will show in a custom block.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function custom_block_plugin_theme() {
+  return [
+    'stock_market' => [
+      'variables' => [
+        'json_data' => NULL,
+      ],
+      'template' => 'stock-market',
+    ],
+  ];
+}

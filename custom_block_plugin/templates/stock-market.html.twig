@@ -1,0 +1,35 @@
+{% if json_data is not empty %}
+<table id="stock-table">
+    <thead>
+        <tr>
+            <th>{{ 'Stock Name'|t }}</th>
+            <th>{{ 'Symbol'|t }}</th>
+            <th>{{ 'Currency'|t }}</th>
+            <th>{{ 'Type'|t }}</th>
+            <th>{{ 'Open'|t }}</th>
+            <th>{{ 'High'|t }} <div class="up_arrow"></div></th>
+            <th>{{ 'Low'|t }} <div class="down_arrow"></div></th>
+            <th>{{ 'Close'|t }}</th>
+            <th>{{ 'Date'|t }}</th>
+        </tr>
+    </thead>
+    {% for key,item in json_data %}
+    <tbody>
+        <tr>
+            <td><b>{{ key }}</b></td>
+            <td>{{ item.meta.symbol }}</td>
+            <td>{{ item.meta.currency ?? item.meta.currency_base}}</td>
+            <td>{{ item.meta.type }}</td>
+            <td>{{ item.values.0.open }}</td>
+            <td>{{ item.values.0.high }}</td>
+            <td>{{ item.values.0.low }}</td>
+            <td>{{ item.values.0.close }}</td>
+            <td>{{ item.values.0.datetime }}</td>
+        </tr>
+    </tbody>
+    {% endfor %}
+</table>
+
+{% else %}
+    <div>No data found!</div>
+{% endif %}
