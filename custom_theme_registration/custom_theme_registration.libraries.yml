@@ -1,0 +1,7 @@
+# Main theme library.
+global:
+  js:
+    js/custom-theme-registration.js: {}
+  css:
+    theme:
+      css/theme/style.css: {}

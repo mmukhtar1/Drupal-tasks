@@ -1,0 +1,38 @@
+<!-- {{ dump (element) }} -->
+<div id="login" class="ptb ptb-xs-60 page-signin">
+  <div class="container">
+    <section class="logo text-center">
+      <h2>Register User</h2>
+    </section>
+    <form class="form-registration ng-pristine ng-valid" {{ attributes }}>
+      <fieldset>
+        <div class="form-group">
+          <div class="ui-input-group">
+            {{ element.account.mail }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="ui-input-group">
+            {{ element.account.name }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="ui-input-group">
+            {{ element.user_picture }}
+          </div>
+        </div>
+
+        <div class="spacer"></div>
+      </fieldset>
+      {{ element.form_build_id }} {# required #}
+      {{ element.form_id }} {# required #}
+
+
+      <div class="card-action no-border text-right">{{ element.actions.submit }}</div>
+
+    </form>
+
+  </div>
+</div>
