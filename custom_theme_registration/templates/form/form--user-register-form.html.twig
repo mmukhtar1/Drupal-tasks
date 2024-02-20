@@ -1,10 +1,9 @@
-<!-- {{ dump (element) }} -->
-<div id="login" class="ptb ptb-xs-60 page-signin">
+<div id="login">
   <div class="container">
-    <section class="logo text-center">
+    <section class="text-center">
       <h2>Register User</h2>
     </section>
-    <form class="form-registration ng-pristine ng-valid" {{ attributes }}>
+    <form class="form-registration" {{ attributes }}>
       <fieldset>
         <div class="form-group">
           <div class="ui-input-group">
@@ -23,8 +22,6 @@
             {{ element.user_picture }}
           </div>
         </div>
-
-        <div class="spacer"></div>
       </fieldset>
       {{ element.form_build_id }} {# required #}
       {{ element.form_id }} {# required #}

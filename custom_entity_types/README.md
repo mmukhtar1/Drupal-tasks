@@ -10,5 +10,5 @@
 
 - Templates are defined via `hook_theme` and used `templates/custom-entity-types.html.twig` template to theme it.
 
-
+![Alt text](screenshot-1.png)
 

@@ -12,3 +12,5 @@
 -  Defined a service to fetch the stock market data from external API.
 
 -  Defined library and css to style the block display.
+
+![Alt text](screenshot-1.png)
