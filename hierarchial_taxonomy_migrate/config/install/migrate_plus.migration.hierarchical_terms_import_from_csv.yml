@@ -1,0 +1,39 @@
+id: hierarchical_terms_import_from_csv
+label: Hierarchial Migration via CSV.
+migration_group: hierarchical_terms_group
+migration_tags:
+  - taxonomy
+source:
+  plugin: 'csv'
+  path: 'modules/custom/hierarchial_taxonomy_migrate/data/hierrachial_data.csv'
+  delimiter: ','
+  enclosure: '"'
+  header_offset: 0
+  ids:
+    - name
+  fields:
+    0:
+      name: name
+      label: 'Name'
+    1:
+      name: description
+      label: 'Description'
+    2:
+      name: parent
+      label: 'Parent'
+
+process:
+  name: name
+  description: description
+  parent:
+    -
+      plugin: migration_lookup
+      migration: hierarchical_terms_import_from_csv
+      source: parent
+    -
+      plugin: default_value
+      default_value: 0
+
+destination:
+  plugin: 'entity:taxonomy_term'
+  default_bundle: categories

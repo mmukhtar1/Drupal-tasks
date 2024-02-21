@@ -1,0 +1,4 @@
+id: hierarchical_terms_group
+label: Hierarchical Terms Group
+description: Import Hierarchial Taxonomy.
+source_type: CSV
