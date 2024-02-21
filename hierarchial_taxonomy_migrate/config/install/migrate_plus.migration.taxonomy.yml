@@ -1,0 +1,26 @@
+id: taxonomy
+label: Import term taxonomy
+migration_group: taxonomy
+source:
+  plugin: embedded_data
+  data_rows:
+    -
+      id: 1
+      name: 'Parent 1'
+    -
+      id: 2
+      name: 'Children 1'
+    -
+      id: 3
+      name: 'Children 2'
+    -
+      id: 4
+      name: 'Children children 1'
+  ids:
+    id:
+      type: integer
+destination:
+  plugin: entity:taxonomy_term
+  default_bundle: tags
+process:
+  name: name

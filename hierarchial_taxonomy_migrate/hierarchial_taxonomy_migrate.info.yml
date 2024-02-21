@@ -1,0 +1,5 @@
+name: 'hierarchial_taxonomy_migrate'
+type: module
+description: 'Migration of Taxonomy terms that are hierarchially classified'
+package: Custom
+core_version_requirement: ^10

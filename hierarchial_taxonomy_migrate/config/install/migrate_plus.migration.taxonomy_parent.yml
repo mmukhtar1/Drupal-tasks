@@ -1,0 +1,33 @@
+id: taxonomy_parent
+label: Set parent taxonomy
+migration_group: taxonomy
+source:
+  plugin: embedded_data
+  data_rows:
+    -
+      id: 2
+      parent: 1
+    -
+      id: 3
+      parent: 1
+    -
+      id: 4
+      parent: 2
+  ids:
+    id:
+      type: integer
+destination:
+  plugin: entity:taxonomy_term
+  default_bundle: tags
+  overwrite_properties:
+    - parent
+process:
+  tid:
+    plugin: migration_lookup
+    migration: taxonomy
+    source: id
+  pid:
+    plugin: migration_lookup
+    migration: taxonomy
+    source: parent
+  parent: '@pid'
