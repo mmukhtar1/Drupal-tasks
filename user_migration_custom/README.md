@@ -8,7 +8,7 @@ Enable the module:
 ``` 
 ddev drush en user_migration_custom
 ```
-Import the configurations via drush : `ddev drush cex -y`
+Export the configurations via drush : `ddev drush cex -y`
 
 ## Running the migrations
 

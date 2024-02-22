@@ -5,50 +5,58 @@ dependencies: {  }
 _core:
   default_config_hash: CKthhfKYoH0VOVA_gTeDVysERmqWHTbhIBl5mN7rIII
 id: custom_user_migration
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags: null
 migration_group: custom_user_migration_group
 label: 'Custom user migration'
 source:
   plugin: embedded_data
   data_rows:
-    - legacy_id: 101
-      public_name: 'Michele'
-      user_email: 'micky@example.com'
-      user_timezone: 'America/New_York'
-      user_password: 'pass1'
-      user_status: 'active'
+    -
+      legacy_id: 101
+      public_name: Michele
+      user_email: micky@example.com
+      user_timezone: America/New_York
+      user_password: pass1
+      user_status: active
       member_since: 'January 1, 2011'
       user_roles: 'forum admin, content editor, authenticated, enterprise_user_'
-      user_photo: 'P01'
+      user_photo: P01
       biogrpahy: 'Example Bio'
       social_link: 'https://twitter.com/user1'
-    - legacy_id: 102
-      public_name: 'Benjamin'
-      user_email: 'ben@example.com'
-      user_timezone: 'America/Chicago'
-      user_password: 'pass2'
-      user_status: 'active'
+    -
+      legacy_id: 102
+      public_name: Benjamin
+      user_email: ben@example.com
+      user_timezone: America/Chicago
+      user_password: pass2
+      user_status: active
       member_since: 'February 2, 2012'
       user_roles: 'webmaster, content editor'
-      user_photo: 'P02'
+      user_photo: P02
       biogrpahy: 'Example Bio 2'
       social_link: 'https://twitter.com/user2'
-    - legacy_id: 103
-      public_name: 'Stefan'
-      user_email: 'stefan@example.com'
-      user_timezone: 'Europe/Berlin'
-      user_password: 'pass3'
-      user_status: 'active'
+    -
+      legacy_id: 103
+      public_name: Stefan
+      user_email: stefan@example.com
+      user_timezone: Europe/Berlin
+      user_password: pass3
+      user_status: active
       member_since: 'March 3, 2013'
       user_roles: 'forum admin, content editor'
-      user_photo: 'P03'
+      user_photo: P03
       biogrpahy: 'Example Bio 3'
       social_link: 'https://twitter.com/user3'
-    - legacy_id: 4
-      public_name: 'Benjamin'
-      user_email: 'benjamin@example.net'
-      user_timezone: 'America/Managua'
-      user_password: 'pass4'
-      user_status: 'inactive'
+    -
+      legacy_id: 4
+      public_name: Benjamin123
+      user_email: benjamin+123@example.net
+      user_timezone: America/Managua
+      user_password: pass4
+      user_status: inactive
       member_since: 'April 4, 2014'
       user_roles: 'content editor'
       biogrpahy: 'Example Bio 4'
@@ -61,16 +69,9 @@ process:
   mail: user_email
   init: user_email
   timezone: user_timezone
-  name:
-    - plugin: machine_name
-      source: public_name
-    - plugin: make_unique_entity_field
-      entity_type: user
-      field: name
-      postfix: _
+  name: public_name
   pass:
-    plugin: callback
-    callable: md5
+    plugin: password_hash
     source: user_password
   status:
     plugin: static_map
@@ -82,23 +83,27 @@ process:
     plugin: format_date
     source: member_since
     from_format: 'F j, Y'
-    to_format: 'U'
+    to_format: U
   changed: '@created'
   access: '@created'
   login: '@created'
   roles:
-    - plugin: skip_on_empty
+    -
+      plugin: skip_on_empty
       method: process
       source: user_roles
-    - plugin: explode
+    -
+      plugin: explode
       delimiter: ','
-    - plugin: callback
+    -
+      plugin: callback
       callable: trim
-    - plugin: static_map
+    -
+      plugin: static_map
       map:
-        forum admin: administrator
+        'forum admin': administrator
         webmaster: administrator
-        content editor: content_editor
+        'content editor': content_editor
         authenticated: authenticated
         enterprise_user_: enterprise_user_
         'NULL': anonymous
@@ -112,5 +117,4 @@ process:
   field_social_media_link: social_link
 destination:
   plugin: 'entity:user'
-  md5_passwords: true
 migration_dependencies: null
