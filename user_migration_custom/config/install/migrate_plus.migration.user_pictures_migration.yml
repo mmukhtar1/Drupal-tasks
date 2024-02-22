@@ -1,0 +1,40 @@
+id: user_pictures_migration
+label: 'User pictures migration'
+migration_group: custom_user_migration_group
+source:
+  constants:
+    DRUPAL_FILE_DIRECTORY: 'public://profile_picture/'
+  plugin: embedded_data
+  data_rows:
+    - photo_id: 'P01'
+      photo_url: 'https://udrupal.com/photos/freescholar.jpg'
+    - photo_id: 'P02'
+      photo_url: 'https://udrupal.com/photos/mlncn.jpg'
+    - photo_id: 'P03'
+      photo_url: 'https://udrupal.com/photos/sfreudenberg.jpg'
+  ids:
+    photo_id:
+      type: string
+process:
+  psf_destination_filename:
+    plugin: callback
+    callable: basename
+    source: photo_url
+  psf_destination_full_path:
+    - plugin: concat
+      source:
+        - constants/DRUPAL_FILE_DIRECTORY
+        - '@psf_destination_filename'
+    - plugin: urlencode
+  psf_source_image_path:
+    plugin: urlencode
+    source: photo_url
+  uri:
+    plugin: file_copy
+    source:
+      - '@psf_source_image_path'
+      - '@psf_destination_full_path'
+    file_exists: 'rename'
+    move: FALSE
+destination:
+  plugin: 'entity:file'

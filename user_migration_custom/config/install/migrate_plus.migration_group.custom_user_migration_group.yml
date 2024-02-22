@@ -1,0 +1,12 @@
+uuid: 12612e41-92bb-4425-8e48-8b944f94ae76
+langcode: en-gb
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: '-mv0MFX4MKNdBw_MaAeUtGxaeO-1cTvbuc_fAk3tG30'
+id: custom_user_migration_group
+label: 'Custom User Migration'
+description: 'User migraton with custom fields'
+source_type: null
+module: null
+shared_configuration: null

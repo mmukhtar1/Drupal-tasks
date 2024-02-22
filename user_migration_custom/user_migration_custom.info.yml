@@ -1,0 +1,5 @@
+name: 'user_migration_custom'
+type: module
+description: 'Migration of user data with custom fields'
+package: Custom
+core_version_requirement: ^10
