@@ -30,7 +30,7 @@ input {
   background-color: hsl(0, 0%, 90%);
 }
 
-/* Media Queries for mobile*/
+/* Media Queries for mobile devices */
 
 /* Mobile S - 320px */
 @media (max-width: 320px) {

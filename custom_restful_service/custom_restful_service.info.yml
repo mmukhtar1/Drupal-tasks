@@ -1,0 +1,5 @@
+name: 'custom_restful_service'
+type: module
+description: 'REST API that implementing HTTP methods (GET, POST, DELETE) to expose the data to users via API service'
+package: Custom
+core_version_requirement: ^10
