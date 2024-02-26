@@ -1,30 +1,35 @@
-## INTRODUCTION
+# Custom RESTful services
 
-The custom_restful_service module is a DESCRIBE_THE_MODULE_HERE.
+This module will create the drupal REST service to expose the data via a webservice using different HTTP methods (GET, POST, PATCH, DELETE) defined in plugin/rest/resource.
 
-The primary use case for this module is:
+## Using the Module
 
-- Use case #1
-- Use case #2
-- Use case #3
+Enable the module: 
+``` 
+ddev drush en custom_restful_service
+```
 
-## REQUIREMENTS
+Go to /admin/config/services/rest and enable all the endpoints defined.
+![Alt text](ss1.png)
 
-DESCRIBE_MODULE_DEPENDENCIES_HERE
+## API endpoints
 
-## INSTALLATION
+- GET: `https://drupal-10.1.6.ddev.site/api/custom-rest-resource/80?_format=json`
 
-Install as you would normally install a contributed Drupal module.
-See: https://www.drupal.org/node/895232 for further information.
+    This endpoint will get the data of a specific node when passing the node id.
+    ![Alt text](ss2.png)
 
-## CONFIGURATION
-- Configuration step #1
-- Configuration step #2
-- Configuration step #3
+- POST: `https://drupal-10.1.6.ddev.site/api/create-article-content?_format=json`
 
-## MAINTAINERS
+    This endpoint will post the data to create the article content.
+    ![Alt text](ss3.png)
 
-Current maintainers for Drupal 10:
+- PATCH: `https://drupal-10.1.6.ddev.site/api/patch-article-content/81?_format=json`
 
-- FIRST_NAME LAST_NAME (NICKNAME) - https://www.drupal.org/u/NICKNAME
+    This endpoint will update the article with a PATCH request.
+     ![Alt text](ss4.png)
 
+- PATCH: `https://drupal-10.1.6.ddev.site/api/delete-article-content/60?_format=json`
+
+This endpoint will delete the article using DELETE request by passing the node id.
+     ![Alt text](ss5.png)

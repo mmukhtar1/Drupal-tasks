@@ -69,13 +69,13 @@ final class PostArticleContentResource extends ResourceBase
       'body' => $data['body'],
       'field_content_access_restriction' => $data['field_content_access_restriction'] ?? [],
       'field_tags' => $data['field_tags'] ?? [],
-      'uid' => 1,
+      'uid' => '1',
       'status' => 1,
     ];
     $node = \Drupal::entityTypeManager()
       ->getStorage('node')
       ->create($data);
-      
+
     if ($node->save()) {
       \Drupal::messenger()->addMessage('Created new article');
       $this->logger->notice('Created new article with id @id.', ['@id' => $node->id()]);
