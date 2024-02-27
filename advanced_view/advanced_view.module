@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Drupal\views\ViewExecutable;
 use Drupal\Core\Render\Markup;
-
+use Drupal\node\Entity\Node;
 
 /**
  * @file
@@ -36,13 +36,36 @@ function advanced_view_views_pre_view(ViewExecutable $view, $display_id, array &
 
     $total = (int)$count1 + (int)$count2;
 
+    //Get pages count
+    $page_publish_count = 0;
+    $page_upublish_count = 0;
+    $query_page = \Drupal::entityQuery('node')
+      ->condition('type', 'page');
+    $query_page->accessCheck(TRUE);
+    $nids = $query_page->execute();
+    $nodes = Node::loadMultiple($nids);
+    foreach ($nodes as $key => $node) {
+      if ($node->status->value) {
+        $page_publish_count++;
+      } else {
+        $page_upublish_count++;
+      }
+    }
+    $total_page_count = (int)$page_publish_count + (int)$page_upublish_count;
+
     $markup = Markup::create("
  <div class='messages'>
- <span> No. of articles published: $count1 <span><br/> 
- <span> No. of articles unpublished: $count2 <span><br/> 
+ <span> No. of articles published: $count1 </span><br/> 
+ <span> No. of articles unpublished: $count2 </span><br/> 
  <span> Total: $total
  </div>
  ");
+
+//  <div class='page-header'>
+//  <span> No. of pages published: $page_publish_count </span><br/> 
+//  <span> No. of pages unpublished: $page_upublish_count </span><br/> 
+//  <span> Total: $total_page_count
+// </div>
 
     $options = array(
       'id' => 'area_text_custom',
