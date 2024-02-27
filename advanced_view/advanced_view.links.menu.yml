@@ -1,0 +1,6 @@
+advanced_view.menu:
+  title: 'Advanced view aggregations'
+  description: 'Advanced view aggregations'
+  route_name: view.views_aggregation_advanced.page_1
+  parent: system.admin_config_ui
+  weight: 15

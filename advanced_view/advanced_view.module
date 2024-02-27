@@ -41,7 +41,8 @@ function advanced_view_views_pre_view(ViewExecutable $view, $display_id, array &
  <span> No. of articles published: $count1 <span><br/> 
  <span> No. of articles unpublished: $count2 <span><br/> 
  <span> Total: $total
- </div>");
+ </div>
+ ");
 
     $options = array(
       'id' => 'area_text_custom',
