@@ -2,7 +2,7 @@
 
 https://d10-mmukhtar-tasks.ddev.site/
 
-username: admin, password: admin
+username: admin, password: ******
 
 1) Custom block plugin
 
