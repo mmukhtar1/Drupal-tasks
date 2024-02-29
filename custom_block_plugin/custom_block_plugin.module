@@ -13,8 +13,8 @@ function custom_block_plugin_help($route_name) {
     // Main module help for the local_weather_forecast module.
     case 'help.page.custom_block_plugin':
       $output = '';
-      $output .= '<h3>' . t('About') . '</h3>';
-      $output .= '<p>' . t('Returns the stock market data that will show in a custom block.') . '</p>';
+      $output .= "<h3> About </h3>";
+      $output .= "<p> Returns the stock market data that will show in a custom block </p>";
       return $output;
 
     default:

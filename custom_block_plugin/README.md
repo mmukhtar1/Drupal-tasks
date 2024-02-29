@@ -4,7 +4,8 @@
 ## Using the block
 
 - Enable the module `custom block_plugin`.
-- Go to admin > strucuture > Block layout and search for `Stock Market Data` and place it in a region (say sidebar or content)
+- Go to admin > strucuture > Block layout and search for 
+`Stock Market Data` and place it in a region (say sidebar or content)
 
 
 -  Created block plugin that will a live stock market from external API

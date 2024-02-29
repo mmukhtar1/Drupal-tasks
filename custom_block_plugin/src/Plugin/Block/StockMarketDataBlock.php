@@ -19,7 +19,7 @@ use Drupal\Core\Form\FormStateInterface;
 final class StockMarketDataBlock extends BlockBase {
 
   /**
-   * {@inheritdoc}
+   * Default configuration of the form.
    */
   public function defaultConfiguration(): array {
     return [
@@ -28,7 +28,7 @@ final class StockMarketDataBlock extends BlockBase {
   }
 
   /**
-   * {@inheritdoc}
+   * Configuration form for the block.
    */
   public function blockForm($form, FormStateInterface $form_state): array {
     $form['api_key'] = [
@@ -36,24 +36,31 @@ final class StockMarketDataBlock extends BlockBase {
       '#title' => $this->t('API Key'),
       '#default_value' => $this->configuration['api_key'],
     ];
+    $form['endpoint'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('API EndPoint'),
+      '#default_value' => $this->configuration['endpoint'],
+    ];
     return $form;
   }
 
   /**
-   * {@inheritdoc}
+   * Block configuration form submit handler.
    */
   public function blockSubmit($form, FormStateInterface $form_state): void {
     $this->configuration['api_key'] = $form_state->getValue('api_key');
+    $this->configuration['endpoint'] = $form_state->getValue('endpoint');
   }
 
   /**
-   * {@inheritdoc}
+   * Build render array for displaying the block .
    */
   public function build(): array {
 
     $api_key = $this->configuration['api_key'];
+    $endpoint = $this->configuration['endpoint'];
     $stock_service = \Drupal::service('custom_block_plugin.stock_market_service');
-    $result = $stock_service->getStockMarketData($api_key);
+    $result = $stock_service->getStockMarketData($api_key, $endpoint);
 
     // Use our theme function to render twig template.
     $build['content'] = [
@@ -66,7 +73,6 @@ final class StockMarketDataBlock extends BlockBase {
       ],
     ];
     $build['#cache']['max-age'] = 0;
-    // $build['#cache']['max-age'] = 3600; //cache for 1 hour
     return $build;
   }
 

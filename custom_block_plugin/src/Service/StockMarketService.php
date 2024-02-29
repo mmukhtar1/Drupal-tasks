@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\custom_block_plugin\Service;
 
+use Drupal\Core\Logger\LoggerChannelFactory;
+use Drupal\Core\Messenger\MessengerInterface;
 use GuzzleHttp\ClientInterface;
 
 /**
@@ -19,45 +21,70 @@ class StockMarketService {
   protected $client;
 
   /**
+   * Logger Factory.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelFactory
+   */
+  protected $loggerFactory;
+
+  /**
+   * Drupal\Core\Messenger\MessengerInterface definition.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+
+  /**
    * StockMarketService constructor.
    *
    * @param \GuzzleHttp\ClientInterface $client
    *   The http client.
+   * @param \Drupal\Core\Logger\LoggerChannelFactory $loggerFactory
+   *   The logger factory.
+   * @param \Drupal\Core\Messenger\Messenger $messenger
+   *   Messenger Object.
    */
-  public function __construct(ClientInterface $client) {
+  public function __construct(ClientInterface $client, LoggerChannelFactory $loggerFactory, MessengerInterface $messenger) {
     $this->client = $client;
+    $this->loggerFactory = $loggerFactory->get('custom_block_plugin');
+    $this->messenger = $messenger;
   }
 
   /**
-   * Gets the stock market real time data.
+   * Gets the stock market real time data from external API.
+   *
+   * @param string $api_key
+   *   API key to connect to the endpoint.
+   * @param string $endpoint
+   *   Endpoint URL.
    *
    * @var \GuzzleHttp\Message\Response $result
    */
-  public function getStockMarketData($api_key) {
-    // $request = $this->client->get(
-    //   'https://api.twelvedata.com/time_series',
-    //   [
-    //     'query' => [
-    //       // Specify which all stocks to be listed here.
-    //       'symbol' => 'AAPL,EUR/USD,IXIC,ETH/BTC:Huobi,TRP:TSX,INFY:NSE',
-    //       'interval' => '1h',
-    //       'apikey' => $api_key,
-    //       'timezone' => 'Asia/Kolkata',
-    //     ],
-    //   ]
-    // );
-    // try {
-    //   if (200 == $request->getStatusCode()) {
-    //     $stock_data = $request->getBody()->getContents();
-    //     return $stock_data;
-    //   }
-    //   else {
-    //     \Drupal::logger('custom_block_plugin')->notice("No data found!");
-    //   }
-    // }
-    // catch (\Exception $e) {
-    //   \Drupal::messenger()->addMessage(t("Could not retrieve the data:" . $e->getMessage()), 'error');
-    // }
+  public function getStockMarketData($api_key, $endpoint) {
+    $request = $this->client->get(
+      $endpoint,
+      [
+        'query' => [
+          // Specify which all stocks to be listed here.
+          'symbol' => 'AAPL,EUR/USD,IXIC,ETH/BTC:Huobi,TRP:TSX,INFY:NSE',
+          'interval' => '1h',
+          'apikey' => $api_key,
+          'timezone' => 'Asia/Kolkata',
+        ],
+      ]
+    );
+    try {
+      if (200 == $request->getStatusCode()) {
+        $stock_data = $request->getBody()->getContents();
+        return $stock_data;
+      }
+      else {
+        $this->loggerFactory->notice("No data found!");
+      }
+    }
+    catch (\Exception $e) {
+      $this->messenger->addMessage(t("Could not retrieve the data: @message", ['@message' => $e->getMessage()]), 'error');
+    }
   }
 
 }
