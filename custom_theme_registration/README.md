@@ -15,3 +15,5 @@ Logout and take `Create new account` from  Login menu
 - Added JS to add placeholders to the email and username fields.
 
 - Added Media Queries to add responsiveness to small devices(Mobile S - 320px , Mobile M - 375px).
+
+![Alt text](ss.png)
