@@ -12,3 +12,6 @@ add/ edit or remove custom entity types.
 
 - Templates are defined via `hook_theme` and 
 used `templates/custom-entity-types.html.twig` template to theme it.
+
+![Alt text](ss1.png)
+![Alt text](ss2.png)
