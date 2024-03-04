@@ -1,5 +1,5 @@
 administer custom_entity_types:
-  title: 'Administer custom entity typess'
+  title: 'Administer custom entity types'
   restrict access: true
 view custom_entity_types:
   title: 'View custom entity types'

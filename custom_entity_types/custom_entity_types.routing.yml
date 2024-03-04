@@ -5,11 +5,3 @@ entity.custom_entity_types.settings:
     _title: 'Custom entity types'
   requirements:
     _permission: 'administer custom_entity_types'
-
-custom_entity_types.multistep_form:
-  path: "/multistep-form/demo"
-  defaults:
-    _title: "Demo MultiStep Form"
-    _form: '\Drupal\custom_entity_types\Form\MultiStepForm'
-  requirements:
-    _permission: "access content"

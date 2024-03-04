@@ -1,4 +1,6 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types = 1);
 
 namespace Drupal\custom_entity_types\Entity;
 
@@ -79,9 +81,7 @@ final class CustomEntityTypes extends ContentEntityBase implements CustomEntityT
 
     $fields = parent::baseFieldDefinitions($entity_type);
 
-    /**
-     * Label
-     */
+    // Label.
     $fields['label'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Label'))
       ->setRequired(TRUE)
@@ -98,32 +98,27 @@ final class CustomEntityTypes extends ContentEntityBase implements CustomEntityT
       ])
       ->setDisplayConfigurable('view', TRUE);
 
-  /**
-   * Type 
-   */  
-  $fields['type'] = BaseFieldDefinition::create("list_string")
-  ->setSettings([
-    'allowed_values' => ['content' => 'content', 'configuration' => 'configuration']
-  ])
-  ->setLabel('Type')
-  ->setDescription('Select type')
-  ->setRequired(TRUE)
-  ->setDisplayOptions('form', array(
-    'type' => 'options_select',
-    'weight' => 2,
-  ))
-  ->setDisplayConfigurable('form', TRUE)
-  ->setDisplayOptions('view', [
-    'type' => 'list_string',
-    'label' => 'above',
-    'weight' => 2,
-  ])
-  ->setDisplayConfigurable('view', TRUE);
+    // Type.
+    $fields['type'] = BaseFieldDefinition::create("list_string")
+      ->setSettings([
+        'allowed_values' => ['content' => 'content', 'configuration' => 'configuration'],
+      ])
+      ->setLabel('Type')
+      ->setDescription('Select type')
+      ->setRequired(TRUE)
+      ->setDisplayOptions('form', [
+        'type' => 'options_select',
+        'weight' => 2,
+      ])
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayOptions('view', [
+        'type' => 'list_string',
+        'label' => 'above',
+        'weight' => 2,
+      ])
+      ->setDisplayConfigurable('view', TRUE);
 
-
-    /**
-     * Description
-     */
+    // Description.
     $fields['description'] = BaseFieldDefinition::create('text_long')
       ->setLabel(t('Description'))
       ->setDisplayOptions('form', [
@@ -138,10 +133,8 @@ final class CustomEntityTypes extends ContentEntityBase implements CustomEntityT
       ])
       ->setDisplayConfigurable('view', TRUE);
 
-    /**
-     * Enabled
-     */
-      $fields['status'] = BaseFieldDefinition::create('boolean')
+    // Enabled.
+    $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Status'))
       ->setDefaultValue(TRUE)
       ->setSetting('on_label', 'Enabled')
@@ -163,9 +156,7 @@ final class CustomEntityTypes extends ContentEntityBase implements CustomEntityT
       ])
       ->setDisplayConfigurable('view', TRUE);
 
-    /**
-     * Author
-     */
+    // Author.
     $fields['uid'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Author'))
       ->setSetting('target_type', 'user')
@@ -187,9 +178,7 @@ final class CustomEntityTypes extends ContentEntityBase implements CustomEntityT
       ])
       ->setDisplayConfigurable('view', TRUE);
 
-    /**
-     * Authored on
-     */
+    // Authored on.
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Authored on'))
       ->setDescription(t('The time that the custom entity types was created.'))

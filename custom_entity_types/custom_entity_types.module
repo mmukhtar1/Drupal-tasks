@@ -1,10 +1,13 @@
-<?php declare(strict_types = 1);
+<?php
 
 /**
  * @file
  * Provides a custom entity types entity type.
  */
 
+declare(strict_types=1);
+
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Render\Element;
 use Drupal\user\UserInterface;
 
@@ -24,8 +27,8 @@ function custom_entity_types_theme(): array {
  *
  * @param array $variables
  *   An associative array containing:
- *   - elements: An associative array containing the custom entity types information and any
- *     fields attached to the entity.
+ *   - elements: An associative array containing the custom entity types
+ *     information and any fields attached to the entity.
  *   - attributes: HTML attributes for the containing element.
  */
 function template_preprocess_custom_entity_types(array &$variables): void {
@@ -40,44 +43,76 @@ function template_preprocess_custom_entity_types(array &$variables): void {
  */
 function custom_entity_types_user_cancel($edit, UserInterface $account, $method): void {
   switch ($method) {
+    case 'user_cancel_block':
     case 'user_cancel_block_unpublish':
-      // Unpublish custom entity typess.
+      // Unpublish custom entity types.
       $storage = \Drupal::entityTypeManager()->getStorage('custom_entity_types');
       $custom_entity_types_ids = $storage->getQuery()
         ->condition('uid', $account->id())
         ->condition('status', 1)
-        ->accessCheck(FALSE)
+        ->accessCheck(TRUE)
         ->execute();
-      foreach ($storage->loadMultiple($custom_entity_types_ids) as $custom_entity_types) {
-        $custom_entity_types->set('status', FALSE)->save();
-      }
+      // Process batch by batch.
+      $batch = [
+        'title' => t('Unpublishing Node...'),
+        'operations' => [
+          [
+            '\Drupal\custom_entity_types\BatchOperations::unPublishNode',
+            [$custom_entity_types_ids],
+          ],
+        ],
+        'finished' => '\Drupal\custom_entity_types\BatchOperations::unPublishNodeFinishedCallback',
+      ];
+      batch_set($batch);
       break;
 
     case 'user_cancel_reassign':
-      // Anonymize custom entity typess.
+      // Anonymize custom entity types.
       $storage = \Drupal::entityTypeManager()->getStorage('custom_entity_types');
       $custom_entity_types_ids = $storage->getQuery()
         ->condition('uid', $account->id())
-        ->accessCheck(FALSE)
+        ->accessCheck(TRUE)
         ->execute();
-      foreach ($storage->loadMultiple($custom_entity_types_ids) as $custom_entity_types) {
-        $custom_entity_types->setOwnerId(0)->save();
-      }
+
+      // Process batch by batch.
+      $batch = [
+        'title' => t('Anonymising Node...'),
+        'operations' => [
+          [
+            '\Drupal\custom_entity_types\BatchOperations::anonymizeNode',
+            [$custom_entity_types_ids],
+          ],
+        ],
+        'finished' => '\Drupal\custom_entity_types\BatchOperations::anonymizeNodeFinishedCallback',
+      ];
+      batch_set($batch);
       break;
   }
 }
 
 /**
- * Implements hook_ENTITY_TYPE_predelete() for user entities.
+ * Implements hook_entity_delete().
  */
-function custom_entity_types_user_predelete(UserInterface $account): void {
-  // Delete custom entity typess that belong to this account.
-  $storage = \Drupal::entityTypeManager()->getStorage('custom_entity_types');
-  $custom_entity_types_ids = $storage->getQuery()
-    ->condition('uid', $account->id())
-    ->accessCheck(FALSE)
-    ->execute();
-  $storage->delete(
-    $storage->loadMultiple($custom_entity_types_ids)
-  );
+function custom_entity_types_entity_delete(EntityInterface $entity) {
+
+  if ($entity->getEntityTypeId() === 'user') {
+    $uid = $entity->id();
+    $storage = \Drupal::entityTypeManager()->getStorage('custom_entity_types');
+    $custom_entity_types_ids = $storage->getQuery()
+      ->condition('uid', $uid)
+      ->accessCheck(TRUE)
+      ->execute();
+
+    // Process batch by batch.
+    $batch = [
+      'title' => t('Deleting Node...'),
+      'operations' => [
+        [
+          '\Drupal\custom_entity_types\BatchOperations::deleteNode',
+          [$custom_entity_types_ids],
+        ],
+      ],
+    ];
+    batch_set($batch);
+  }
 }

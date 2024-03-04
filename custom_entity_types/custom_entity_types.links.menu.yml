@@ -5,7 +5,7 @@ entity.custom_entity_types.settings:
   parent: system.admin_structure
 
 entity.custom_entity_types.collection:
-  title: 'Custom entity typess'
-  description: 'List of custom entity typess.'
+  title: 'Custom entity types'
+  description: 'List of custom entity types.'
   route_name: entity.custom_entity_types.collection
   parent: system.admin_content

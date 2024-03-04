@@ -1,0 +1,4 @@
+services:
+  custom_entity_types.service:
+    class: Drupal\custom_entity_types\BatchOperations
+    arguments: ['@messenger', '@logger.factory', '@string_translation']
