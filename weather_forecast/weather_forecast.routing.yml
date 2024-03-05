@@ -1,7 +1,7 @@
 weather_forecast.settings:
   path: '/admin/config/system/weather-forecast'
   defaults:
-    _form: '\Drupal\weather_forecast\Form\SettingsForm'
+    _form: '\Drupal\weather_forecast\Form\ForecastSettingsForm'
     _title: 'Local Weather Forecast'
   requirements:
     _permission: 'administer site configuration'
@@ -10,6 +10,6 @@ weather_forecast.show_weather_forecast:
   path: '/weather-forecast/show-weather-forcast'
   defaults:
     _title: 'Weather forecast'
-    _controller: '\Drupal\weather_forecast\Controller\WeatherForecastController::show_forecast'
+    _controller: '\Drupal\weather_forecast\Controller\WeatherForecastController::showForecast'
   requirements:
     _permission: 'access content'

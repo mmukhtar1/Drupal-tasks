@@ -1,4 +1,4 @@
 services:
   weather_forecast.forecast:
     class: Drupal\weather_forecast\Service\ForecastService
-    arguments: ['@http_client']
+    arguments: ['@http_client', '@config.factory', '@messenger']

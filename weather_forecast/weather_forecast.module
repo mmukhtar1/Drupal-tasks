@@ -5,23 +5,24 @@
  * Contains weather_forecast.module.
  */
 
- use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 
- /**
-  * Implements hook_help().
-  */
- function weather_forecast_help($route_name, RouteMatchInterface $route_match) {
-   switch ($route_name) {
-     // Main module help for the local_weather_forecast module.
-     case 'help.page.weather_forecast':
-       $output = '';
-       $output .= '<h3>' . t('About') . '</h3>';
-       $output .= '<p>' . t('Returns a weather forecast for a user provided city.') . '</p>';
-       return $output;
- 
-     default:
-   }
- }
+/**
+ * Implements hook_help().
+ */
+function weather_forecast_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the local_weather_forecast module.
+    case 'help.page.weather_forecast':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Returns a weather forecast for a user provided city.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
 /**
  * Implements hook_theme().
  */

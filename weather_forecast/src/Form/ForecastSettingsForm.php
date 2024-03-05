@@ -8,40 +8,36 @@ use Drupal\Core\Form\FormStateInterface;
 /**
  * Configure example settings for this site.
  */
-class settingsForm extends ConfigFormBase
-{
-  const configName = 'weather_forecast.settings';
+class ForecastSettingsForm extends ConfigFormBase {
+  const CONFIGNAME = 'weather_forecast.settings';
 
   /**
    * {@inheritdoc}
    */
-  public function getFormId()
-  {
+  public function getFormId() {
     return 'weather_forecast_settings';
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames()
-  {
+  protected function getEditableConfigNames() {
     return [
-      self::configName,
+      self::CONFIGNAME,
     ];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state)
-  {
-    $config = $this->config(self::configName);
+  public function buildForm(array $form, FormStateInterface $form_state) {
+    $config = $this->config(self::CONFIGNAME);
 
-    $form['api_key'] = array(
+    $form['api_key'] = [
       '#type' => 'textfield',
       '#title' => $this->t('API Key'),
       '#default_value' => $config->get('api_key'),
-    );
+    ];
 
     $cities = [
       'New York' => 'New York',
@@ -260,23 +256,27 @@ class settingsForm extends ConfigFormBase
       '#default_value' => $config->get('increments'),
     ];
 
-
     return parent::buildForm($form, $form_state);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state)
-  {
-    // Retrieve the configuration
-    $this->config(self::configName)
-      // Set the submitted configuration setting
-      ->set('api_key', $form_state->getValue('api_key'))
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+    // Retrieve the configuration.
+    $config = $this->configFactory()->getEditable(self::CONFIGNAME);
+    $config->set('api_key', $form_state->getValue('api_key'))
       ->set('city', $form_state->getValue('city'))
       ->set('increments', $form_state->getValue('increments'))
       ->save();
 
+    // $this->config(self::CONFIGNAME)
+    //   // Set the submitted configuration setting.
+    //   ->set('api_key', $form_state->getValue('api_key'))
+    //   ->set('city', $form_state->getValue('city'))
+    //   ->set('increments', $form_state->getValue('increments'))
+    //   ->save();
     parent::submitForm($form, $form_state);
   }
+
 }

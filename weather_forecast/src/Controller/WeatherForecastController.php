@@ -4,19 +4,42 @@ declare(strict_types=1);
 
 namespace Drupal\weather_forecast\Controller;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Returns responses for Local Weather Forecast routes.
  */
-final class WeatherForecastController extends ControllerBase
-{
+final class WeatherForecastController extends ControllerBase {
+
+  /**
+   * Configuration Factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
+   * Constructor.
+   */
+  public function __construct(ConfigFactoryInterface $configFactory) {
+    $this->configFactory = $configFactory;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('config.factory')
+    );
+  }
 
   /**
    * Builds the response.
    */
-  public function __invoke(): array
-  {
+  public function __invoke(): array {
 
     $build['content'] = [
       '#type' => 'item',
@@ -29,21 +52,20 @@ final class WeatherForecastController extends ControllerBase
   /**
    * Show the forecast for a city.
    */
-  public function show_forecast()
-  {
+  public function showForecast() {
 
-    $config = \Drupal::config('weather_forecast.settings');
+    $config = $this->configFactory->get('weather_forecast.settings');
     $city = $config->get('city');
     $increments = $config->get('increments');
 
     $forecaster = \Drupal::service('weather_forecast.forecast');
     $forecast = $forecaster->getByCity($city, $increments);
-    if(!empty($forecast)){
+    if (!empty($forecast->list) && !empty($forecast->city)) {
       $hourly_forecast = $forecast->list;
       $timezone = timezone_name_from_abbr('', $forecast->city->timezone, 0);
     }
-   
-    // use our theme function to render twig template
+
+    // Use our theme function to render twig template.
     $build['content'] = [
       '#theme' => 'weather_forecast',
       '#city' => $forecast->city->name ?? '',
@@ -55,4 +77,5 @@ final class WeatherForecastController extends ControllerBase
 
     return $build;
   }
+
 }
