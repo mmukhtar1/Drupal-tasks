@@ -4,8 +4,8 @@ description: 'Migration of Taxonomy terms that are hierarchially classified'
 package: Custom
 core_version_requirement: ^10
 dependencies:
-  - migrate_plus
-  - migrate_tools
-  - migrate_source_csv
-  - node
-  - taxonomy
+  - drupal:migrate_plus
+  - drupal:migrate_tools
+  - drupal:migrate_source_csv
+  - drupal:node
+  - drupal:taxonomy
