@@ -1,18 +1,17 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * @file
  * Functions to support theming in the custom_theme_registration theme.
  */
 
-/**
- * Implements hook_theme_suggestions_alter
- */
-function custom_theme_registration_theme_suggestions_alter(array &$suggestions, array $variables, $hook){
-    if ($hook == 'form' & !empty($variables['element']['#id'])) {
-        $suggestions[] = 'form__' . str_replace('-', '_', $variables['element']['#id']);
-    }
-}
+declare(strict_types=1);
 
+/**
+ * Implements hook_theme_suggestions_alter().
+ */
+function custom_theme_registration_theme_suggestions_alter(array &$suggestions, array $variables, $hook) {
+  if ($hook == 'form' & !empty($variables['element']['#id'])) {
+    $suggestions[] = 'form__' . str_replace('-', '_', $variables['element']['#id']);
+  }
+}
