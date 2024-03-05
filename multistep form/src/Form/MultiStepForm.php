@@ -1,53 +1,73 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\multi_step_form\Form\MultiStepForm.
- */
-
 namespace Drupal\multi_step_form\Form;
 
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\file\Entity\File;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class MultiStepForm extends FormBase
-{
-
+/**
+ * Navigate through each steps of the form and validate.
+ */
+class MultiStepForm extends FormBase {
 
 
   /**
-   * {@inheritdoc}
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected function getEditableConfigNames()
-  {
+  protected $entityTypeManager;
+
+  /**
+   * The construct method.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   EntityTypeManagerInterface service.
+   */
+  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getFormID()
-  {
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('entity_type.manager'),
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getEditableConfigNames() {
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFormId() {
     return 'multi_step_form';
   }
 
   /**
-   *  STEP 1
-   * {@inheritdoc}
+   * STEP 1.
    */
-  public function buildForm(array $form, FormStateInterface $form_state)
-  {
+  public function buildForm(array $form, FormStateInterface $form_state) {
     if ($form_state->has('page') && $form_state->get('page') == 2) {
       return self::formPageTwo($form, $form_state);
-    } else if ($form_state->has('page') && $form_state->get('page') == 3) {
+    }
+    elseif ($form_state->has('page') && $form_state->get('page') == 3) {
       return self::formPageThree($form, $form_state);
     }
 
-    $form = array(
-      '#attributes' => array('enctype' => 'multipart/form-data'),
-    );
+    $form = [
+      '#attributes' => ['enctype' => 'multipart/form-data'],
+    ];
 
     $form_state->set('page', 1);
 
@@ -93,8 +113,10 @@ class MultiStepForm extends FormBase
     return $form;
   }
 
-  public function validatePageOne(array &$form, FormStateInterface $form_state)
-  {
+  /**
+   * Validate the Step1 form.
+   */
+  public function validatePageOne(array &$form, FormStateInterface $form_state) {
     $first_name = $form_state->getValue('first_name');
     if (strlen($first_name) < 5) {
       $form_state->setErrorByName('first_name', $this->t('The first name must be at least 5 characters long.'));
@@ -102,13 +124,14 @@ class MultiStepForm extends FormBase
   }
 
   /**
+   * Submission handler for Step1 form.
+   *
    * @param array $form
    *   An associative array containing the structure of the form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    */
-  public function submitPageOne(array &$form, FormStateInterface $form_state)
-  {
+  public function submitPageOne(array &$form, FormStateInterface $form_state) {
     $form_state
       ->set('page_values', [
         'first_name' => $form_state->getValue('first_name'),
@@ -119,16 +142,17 @@ class MultiStepForm extends FormBase
   }
 
   /**
-   * STEP 2
+   * STEP 2.
+   *
    * @param array $form
    *   An associative array containing the structure of the form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
+   *
    * @return array
    *   The render array defining the elements of the form.
    */
-  public function formPageTwo(array &$form, FormStateInterface $form_state)
-  {
+  public function formPageTwo(array &$form, FormStateInterface $form_state) {
 
     $form_state->set('page', 2);
 
@@ -164,21 +188,24 @@ class MultiStepForm extends FormBase
   }
 
   /**
+   * Step2 form back navigation handler.
+   *
    * @param array $form
    *   An associative array containing the structure of the form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    */
-  public function pageTwoBack(array &$form, FormStateInterface $form_state)
-  {
+  public function pageTwoBack(array &$form, FormStateInterface $form_state) {
     $form_state
       ->setValues($form_state->get('page_values'))
       ->set('page', 1)
       ->setRebuild(TRUE);
   }
 
-  public function validatePageTwo(array &$form, FormStateInterface $form_state)
-  {
+  /**
+   * Validate the Step2 form.
+   */
+  public function validatePageTwo(array &$form, FormStateInterface $form_state) {
     $email = $form_state->getValue('email');
     if (!empty($email) && !filter_var($form_state->getValue('email'), FILTER_VALIDATE_EMAIL)) {
       $form_state->setErrorByName('email', $this->t('Please enter a valid email.'));
@@ -186,13 +213,14 @@ class MultiStepForm extends FormBase
   }
 
   /**
+   * Page 2 submission handler.
+   *
    * @param array $form
    *   An associative array containing the structure of the form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    */
-  public function submitPageTwo(array &$form, FormStateInterface $form_state)
-  {
+  public function submitPageTwo(array &$form, FormStateInterface $form_state) {
 
     $form_values = array_merge(
       $form_state->get('page_values'),
@@ -206,26 +234,27 @@ class MultiStepForm extends FormBase
   }
 
   /**
-   *  STEP 3
+   * STEP 3.
+   *
    * @param array $form
    *   An associative array containing the structure of the form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
+   *
    * @return array
    *   The render array defining the elements of the form.
    */
-  public function formPageThree(array &$form, FormStateInterface $form_state)
-  {
+  public function formPageThree(array &$form, FormStateInterface $form_state) {
     $form['description'] = [
       '#type' => 'item',
       '#title' => $this->t('<b>Page @page</b>', ['@page' => $form_state->get('page')]),
     ];
 
-    $form['location'] = array(
+    $form['location'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Your location'),
       '#default_value' => $form_state->getValue('location', ''),
-    );
+    ];
     $form['back'] = [
       '#type' => 'submit',
       '#value' => $this->t('Back'),
@@ -242,13 +271,14 @@ class MultiStepForm extends FormBase
   }
 
   /**
+   * Step3 navigation to the back handler.
+   *
    * @param array $form
    *   An associative array containing the structure of the form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    */
-  public function pageThreeBack(array &$form, FormStateInterface $form_state)
-  {
+  public function pageThreeBack(array &$form, FormStateInterface $form_state) {
     $form_state
       ->setValues($form_state->get('page_values'))
       ->set('page', 2)
@@ -256,18 +286,21 @@ class MultiStepForm extends FormBase
   }
 
   /**
+   * Final Submit form handler.
+   *
    * @param array $form
-   * @param FormStateInterface $form_state
+   *   The form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   An array which stores information about the form.
    */
-  public function submitForm(array &$form, FormStateInterface $form_state)
-  {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
 
-    $form_values =  $form_state->get('page_values');
+    $form_values = $form_state->get('page_values');
     $form_values['location'] = $form_state->getValue('location');
-    //Handle file upload
+    // Handle file upload.
     $form_file = $form_state->getValue('resume', 0);
     if (isset($form_file[0]) && !empty($form_file[0])) {
-      $file = File::load($form_file[0]);
+      $file = $this->entityTypeManager->getStorage('file')->load($form_file[0]);
       $file->setPermanent();
       $file->save();
     }
@@ -279,8 +312,9 @@ class MultiStepForm extends FormBase
       email:" . $form_values['email'] . " <br/>
       location:" . $form_values['location'] . " <br/"
     );
-    $status_message = new TranslatableMarkup('@message', array('@message' => $rendered_message));
-    \Drupal::messenger()->addStatus($status_message);
-    \Drupal::messenger()->addMessage('Thank you');
+    $status_message = new TranslatableMarkup('@message', ['@message' => $rendered_message]);
+    $this->messenger()->addStatus($status_message);
+    $this->messenger()->addMessage('Thank you');
   }
+
 }
