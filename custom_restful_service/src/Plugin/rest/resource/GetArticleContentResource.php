@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace Drupal\custom_restful_service\Plugin\rest\resource;
 
-use Drupal\Core\KeyValueStore\KeyValueFactoryInterface;
-use Drupal\Core\KeyValueStore\KeyValueStoreInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\rest\Plugin\ResourceBase;
 use Drupal\rest\ResourceResponse;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Route;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Drupal\node\Entity\Node;
 
 /**
  * Represents Get Article Content Resource records as resources.
@@ -25,22 +24,45 @@ use Drupal\node\Entity\Node;
  *     "canonical" = "/api/custom-rest-resource/{nid}",
  *   }
  * )
- * 
- * 
+ *
+ *
  * For entities, it is recommended to use REST resource plugin provided by
  * Drupal core.
  * @see \Drupal\rest\Plugin\rest\resource\EntityResource
  */
-final class GetArticleContentResource extends ResourceBase
-{
+final class GetArticleContentResource extends ResourceBase {
 
   /**
-   * The key-value storage.
+   * Current user account.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
    */
-  private readonly KeyValueStoreInterface $storage;
+  protected $currentUser;
 
   /**
-   * {@inheritdoc}
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * Constructs a Drupal\rest\Plugin\rest\resource\EntityResource object.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin ID for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param array $serializer_formats
+   *   The available serialization formats.
+   * @param \Psr\Log\LoggerInterface $logger
+   *   A logger instance.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   The entity type manager.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    */
   public function __construct(
     array $configuration,
@@ -48,17 +70,30 @@ final class GetArticleContentResource extends ResourceBase
     $plugin_definition,
     array $serializer_formats,
     LoggerInterface $logger,
-    KeyValueFactoryInterface $keyValueFactory,
+    AccountInterface $current_user,
+    EntityTypeManagerInterface $entity_type_manager
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $serializer_formats, $logger);
-    $this->storage = $keyValueFactory->get('custom_restful_service_custom_get_rest_resource');
+    $this->currentUser = $current_user;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
-   * {@inheritdoc}
+   * Creates an instance of the plugin.
+   *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   The container to pull out services used in the plugin.
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin ID for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   *
+   * @return static
+   *   Returns an instance of this plugin.
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self
-  {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
 
     return new self(
       $configuration,
@@ -66,31 +101,25 @@ final class GetArticleContentResource extends ResourceBase
       $plugin_definition,
       $container->getParameter('serializer.formats'),
       $container->get('logger.factory')->get('rest'),
-      $container->get('keyvalue')
+      $container->get('current_user'),
+      $container->get('entity_type.manager'),
     );
   }
-
 
   /**
    * Responds to GET requests.
    */
-  public function get($nid): ResourceResponse
-  {
+  public function get($nid): ResourceResponse {
     if (!$nid) {
       throw new NotFoundHttpException();
     }
-    if (!(\Drupal::currentUser())->hasPermission('access content')) {
+    if (!$this->currentUser->hasPermission('access content')) {
       throw new AccessDeniedHttpException();
     }
-    $query = \Drupal::entityQuery('node')
-      ->condition('type', 'article')
-      ->condition('nid', $nid);
-    $query->accessCheck(TRUE);
 
-    $nids =  $query->execute();
-    if ($nids) {
-      $nodes =  Node::loadMultiple($nids);
-      foreach ($nodes as $key => $value) {
+    $nodes = $this->getNodeDetails($nid);
+    if ($nodes) {
+      foreach ($nodes as $value) {
         $data[] = [
           'id' => $value->id(),
           'title' => $value->getTitle(),
@@ -100,14 +129,15 @@ final class GetArticleContentResource extends ResourceBase
           'Tags' => $value->get('field_tags')->getValue(),
         ];
       }
-    }else{
+    }
+    else {
       $data = [
-        'message' => 'No Article found with node id specified.'
+        'message' => 'No Article found with node id specified.',
       ];
     }
 
     $response = new ResourceResponse($data);
-    // In order to generate fresh result every time (without clearing 
+    // In order to generate fresh result every time (without clearing
     // the cache), you need to invalidate the cache.
     if ($response) {
       $response->addCacheableDependency($data);
@@ -118,8 +148,7 @@ final class GetArticleContentResource extends ResourceBase
   /**
    * {@inheritdoc}
    */
-  protected function getBaseRoute($canonical_path, $method): Route
-  {
+  protected function getBaseRoute($canonical_path, $method): Route {
     $route = parent::getBaseRoute($canonical_path, $method);
     // Set ID validation pattern.
     if ($method !== 'POST') {
@@ -129,16 +158,32 @@ final class GetArticleContentResource extends ResourceBase
   }
 
   /**
-   * Returns next available ID.
+   * Get the node details by passing the nid. As we are geting only.
+   *
+   *  One node, we are not caching the result.
+   *
+   * @param string $nid
+   *   Node id.
+   *
+   * @return array
+   *   Node data.
    */
-  private function getNextId(): int
-  {
-    $ids = \array_keys($this->storage->getAll());
-    return count($ids) > 0 ? max($ids) + 1 : 1;
+  public function getNodeDetails($nid): array {
+    $values = [
+      'type' => 'article',
+      'nid' => $nid,
+    ];
+
+    $nodes = $this->entityTypeManager
+      ->getStorage('node')
+      ->loadByProperties($values);
+
+    if ($nodes) {
+      return $nodes;
+    }
+    else {
+      return [];
+    }
   }
 
-  public function permissions()
-  {
-    return [];
-  }
 }

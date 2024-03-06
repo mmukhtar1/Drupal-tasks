@@ -1,6 +1,8 @@
 # Custom RESTful services
 
-This module will create the drupal REST service to expose the data via a webservice using different HTTP methods (GET, POST, PATCH, DELETE) defined in plugin/rest/resource.
+This module will create the drupal REST service to 
+expose the data via a webservice using different HTTP 
+methods (GET, POST, PATCH, DELETE) defined in plugin/rest/resource.
 
 ## Using the Module
 
@@ -31,5 +33,6 @@ Go to /admin/config/services/rest and enable all the endpoints defined.
 
 - PATCH: `https://drupal-10.1.6.ddev.site/api/delete-article-content/60?_format=json`
 
-This endpoint will delete the article using DELETE request by passing the node id.
+This endpoint will delete the article using DELETE 
+request by passing the node id.
      ![Alt text](ss5.png)

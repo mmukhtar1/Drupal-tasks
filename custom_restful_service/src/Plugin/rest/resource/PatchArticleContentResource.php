@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\custom_restful_service\Plugin\rest\resource;
 
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\rest\ModifiedResourceResponse;
 use Drupal\rest\Plugin\ResourceBase;
 use Psr\Log\LoggerInterface;
@@ -21,16 +22,35 @@ use Symfony\Component\Routing\Route;
  *     "canonical" = "/api/patch-article-content/{nid}",
  *   }
  * )
- * 
+ *
  * For entities, it is recommended to use REST resource plugin provided by
  * Drupal core.
  * @see \Drupal\rest\Plugin\rest\resource\EntityResource
  */
-final class PatchArticleContentResource extends ResourceBase
-{
+final class PatchArticleContentResource extends ResourceBase {
 
   /**
-   * {@inheritdoc}
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * Constructs a Drupal\rest\Plugin\rest\resource\EntityResource object.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin ID for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param array $serializer_formats
+   *   The available serialization formats.
+   * @param \Psr\Log\LoggerInterface $logger
+   *   A logger instance.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    */
   public function __construct(
     array $configuration,
@@ -38,29 +58,39 @@ final class PatchArticleContentResource extends ResourceBase
     $plugin_definition,
     array $serializer_formats,
     LoggerInterface $logger,
+    EntityTypeManagerInterface $entity_type_manager,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $serializer_formats, $logger);
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
-   * {@inheritdoc}
+   * Constructs a Drupal\rest\Plugin\rest\resource\EntityResource object.
+   *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   The container to pull out services used in the plugin.
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin ID for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self
-  {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new self(
       $configuration,
       $plugin_id,
       $plugin_definition,
       $container->getParameter('serializer.formats'),
-      $container->get('logger.factory')->get('rest')
+      $container->get('logger.factory')->get('rest'),
+      $container->get('entity_type.manager'),
     );
   }
 
   /**
    * Responds to PATCH requests.
    */
-  public function patch($nid, array $data): ModifiedResourceResponse
-  {
+  public function patch($nid, array $data): ModifiedResourceResponse {
     if (!$nid) {
       throw new NotFoundHttpException();
     }
@@ -68,7 +98,7 @@ final class PatchArticleContentResource extends ResourceBase
     $body = $data['body'];
     $field_content_access_restriction = $data['field_content_access_restriction'];
     $field_tags = $data['field_tags'];
-    $node = \Drupal::entityTypeManager()->getStorage('node')->load($nid);
+    $node = $this->entityTypeManager->getStorage('node')->load($nid);
     if ($node) {
       try {
         $node->set('title', $title);
@@ -78,30 +108,29 @@ final class PatchArticleContentResource extends ResourceBase
         if ($node->save()) {
           $this->logger->notice('Artcile with id @id updated successfully.', ['@id' => $nid]);
         }
-      } catch (\Exception $e) {
+      }
+      catch (\Exception $e) {
         $this->logger->error('Article update failed:' . $e);
       }
       $this->logger->notice('The patch an article content record @id has been updated.', ['@id' => $nid]);
       $response = [
-        'message' => "Article with id $nid updated successfully."
+        'message' => "Article with id $nid updated successfully.",
       ];
       return new ModifiedResourceResponse($response, 200);
-    } else {
+    }
+    else {
       $this->logger->notice('Article with nid @nid does not exist.', ['@nid' => $nid]);
       $response = [
-        'message' => "Article with nid $nid does not exist."
+        'message' => "Article with nid $nid does not exist.",
       ];
       return new ModifiedResourceResponse($response, 404);
     }
   }
 
-
-
   /**
-   * {@inheritdoc}
+   * Gets the base route.
    */
-  protected function getBaseRoute($canonical_path, $method): Route
-  {
+  protected function getBaseRoute($canonical_path, $method): Route {
     $route = parent::getBaseRoute($canonical_path, $method);
     // Set ID validation pattern.
     if ($method !== 'POST') {
@@ -109,4 +138,5 @@ final class PatchArticleContentResource extends ResourceBase
     }
     return $route;
   }
+
 }
