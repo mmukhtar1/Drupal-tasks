@@ -52,18 +52,7 @@ function custom_entity_types_user_cancel($edit, UserInterface $account, $method)
         ->condition('status', 1)
         ->accessCheck(TRUE)
         ->execute();
-      // Process batch by batch.
-      $batch = [
-        'title' => t('Unpublishing Node...'),
-        'operations' => [
-          [
-            '\Drupal\custom_entity_types\BatchOperations::unPublishNode',
-            [$custom_entity_types_ids],
-          ],
-        ],
-        'finished' => '\Drupal\custom_entity_types\BatchOperations::unPublishNodeFinishedCallback',
-      ];
-      batch_set($batch);
+      custom_entity_types_process_batch($custom_entity_types_ids, 'unPublishNode', 'unPublishNodeFinishedCallback');
       break;
 
     case 'user_cancel_reassign':
@@ -74,18 +63,7 @@ function custom_entity_types_user_cancel($edit, UserInterface $account, $method)
         ->accessCheck(TRUE)
         ->execute();
 
-      // Process batch by batch.
-      $batch = [
-        'title' => t('Anonymising Node...'),
-        'operations' => [
-          [
-            '\Drupal\custom_entity_types\BatchOperations::anonymizeNode',
-            [$custom_entity_types_ids],
-          ],
-        ],
-        'finished' => '\Drupal\custom_entity_types\BatchOperations::anonymizeNodeFinishedCallback',
-      ];
-      batch_set($batch);
+      custom_entity_types_process_batch($custom_entity_types_ids, 'anonymizeNode', 'anonymizeNodeFinishedCallback');
       break;
   }
 }
@@ -103,16 +81,33 @@ function custom_entity_types_entity_delete(EntityInterface $entity) {
       ->accessCheck(TRUE)
       ->execute();
 
-    // Process batch by batch.
-    $batch = [
-      'title' => t('Deleting Node...'),
-      'operations' => [
-        [
-          '\Drupal\custom_entity_types\BatchOperations::deleteNode',
-          [$custom_entity_types_ids],
-        ],
-      ],
-    ];
-    batch_set($batch);
+    custom_entity_types_process_batch($custom_entity_types_ids, 'deleteNode', '');
   }
+}
+
+/**
+ * Process the node id's provided in a batch.
+ *
+ * @param array $entity_type_ids
+ *   Entity Type ids.
+ * @param string $op
+ *   Operation.
+ * @param string $cb
+ *   Callback on finishing the batch.
+ */
+function custom_entity_types_process_batch($entity_type_ids, $op, $cb = ''): void {
+  // Process batch by batch.
+  $batch = [
+    'title' => t('Processing Node...'),
+    'init_message' => t('Processing nodes..'),
+    'error_message' => t('The nodes could not be processed because an error occurred.'),
+    'operations' => [
+      [
+        '\Drupal\custom_entity_types\BatchOperations::' . $op,
+        [$entity_type_ids],
+      ],
+    ],
+    'finished' => '\Drupal\custom_entity_types\BatchOperations::' . $cb,
+  ];
+  batch_set($batch);
 }

@@ -3,7 +3,7 @@
 namespace Drupal\custom_entity_types;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Logger\LoggerChannelFactory;
+use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -21,11 +21,11 @@ class BatchOperations {
   protected $messenger;
 
   /**
-   * Logger Factory.
+   * The logger channel factory.
    *
-   * @var \Drupal\Core\Logger\LoggerChannelFactory
+   * @var \Drupal\Core\Logger\LoggerChannelInterface
    */
-  protected $loggerFactory;
+  protected $logger;
 
   /**
    * The entity type manager.
@@ -40,12 +40,12 @@ class BatchOperations {
    */
   public function __construct(
         MessengerInterface $messenger,
-        LoggerChannelFactory $loggerFactory,
+        LoggerChannelInterface $logger,
         EntityTypeManagerInterface $entity_type_manager,
         TranslationInterface $string_translation
     ) {
     $this->messenger = $messenger;
-    $this->loggerFactory = $loggerFactory->get('custom_entity_types');
+    $this->logger = $logger->get('custom_entity_types');
     $this->entityTypeManager = $entity_type_manager;
     $this->stringTranslation = $string_translation;
   }
@@ -53,7 +53,7 @@ class BatchOperations {
   /**
    * Unpbublish the nodes by batch.
    */
-  public static function unPublishNode($nids, &$context) {
+  public static function unPublishNode($nids, &$context): void {
     $message = 'Unpublishing Node...';
     $results = [];
     foreach ($nids as $nid) {
@@ -68,11 +68,11 @@ class BatchOperations {
   /**
    * Anonymises the nodes by batch.
    */
-  public static function anonymizeNode($nids, &$context) {
+  public function anonymizeNode($nids, &$context): void {
     $message = 'Anonymizing Node...';
     $results = [];
     foreach ($nids as $nid) {
-      $storage = \Drupal::entityTypeManager()->getStorage('custom_entity_types');
+      $storage = $this->entityTypeManager->getStorage('custom_entity_types');
       $node = $storage->load($nid);
       $results[] = $node->set('uid', 0)->save();
     }
@@ -83,11 +83,11 @@ class BatchOperations {
   /**
    * Deletes the nodes by batch.
    */
-  public static function deleteNode($nids, &$context) {
+  public function deleteNode($nids, &$context): void {
     $message = 'Deleting Node...';
     $results = [];
     foreach ($nids as $nid) {
-      $storage = \Drupal::entityTypeManager()->getStorage('custom_entity_types');
+      $storage = $this->entityTypeManager->getStorage('custom_entity_types');
       $node = $storage->load($nid);
       $results[] = $node->delete();
     }
@@ -98,7 +98,7 @@ class BatchOperations {
   /**
    * Unpublish node finished callback.
    */
-  public static function unPublishNodeFinishedCallback($success, $results, $operations) {
+  public static function unPublishNodeFinishedCallback($success, $results, $operations): void {
     // The 'success' parameter means no fatal PHP errors were detected. All
     // other error management should be handled using 'results'.
     if ($success) {
@@ -107,7 +107,7 @@ class BatchOperations {
             'One post processed.',
             '@count posts processed.'
         );
-      \Drupal::logger('custom_entity_types')->notice($message);
+        \Drupal::logger('custom_entity_types')->notice($message);
     }
     else {
       $message = t('Finished with an error.');
@@ -118,7 +118,7 @@ class BatchOperations {
   /**
    * Anonymise node finished callback.
    */
-  public function anonymizeNodeFinishedCallback($success, $results, $operations) {
+  public function anonymizeNodeFinishedCallback($success, $results, $operations): void {
     // The 'success' parameter means no fatal PHP errors were detected. All
     // other error management should be handled using 'results'.
     if ($success) {
@@ -127,7 +127,7 @@ class BatchOperations {
             'One post processed.',
             '@count posts processed.'
         );
-      $this->loggerFactory->notice($message);
+      $this->logger->notice($message);
     }
     else {
       $message = $this->t('Finished with an error.');

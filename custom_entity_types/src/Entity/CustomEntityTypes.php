@@ -80,7 +80,6 @@ final class CustomEntityTypes extends ContentEntityBase implements CustomEntityT
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
 
     $fields = parent::baseFieldDefinitions($entity_type);
-
     // Label.
     $fields['label'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Label'))
@@ -98,8 +97,22 @@ final class CustomEntityTypes extends ContentEntityBase implements CustomEntityT
       ])
       ->setDisplayConfigurable('view', TRUE);
 
+    // Description.
+    $fields['description'] = BaseFieldDefinition::create('text_long')
+      ->setLabel(t('Description'))
+      ->setDisplayOptions('form', [
+        'type' => 'text_textarea',
+        'weight' => 3,
+      ])
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayOptions('view', [
+        'type' => 'text_default',
+        'label' => 'above',
+        'weight' => 3,
+      ])
+      ->setDisplayConfigurable('view', TRUE);
     // Type.
-    $fields['type'] = BaseFieldDefinition::create("list_string")
+    $fields['type'] = BaseFieldDefinition::create('list_string')
       ->setSettings([
         'allowed_values' => ['content' => 'content', 'configuration' => 'configuration'],
       ])
@@ -117,22 +130,6 @@ final class CustomEntityTypes extends ContentEntityBase implements CustomEntityT
         'weight' => 2,
       ])
       ->setDisplayConfigurable('view', TRUE);
-
-    // Description.
-    $fields['description'] = BaseFieldDefinition::create('text_long')
-      ->setLabel(t('Description'))
-      ->setDisplayOptions('form', [
-        'type' => 'text_textarea',
-        'weight' => 3,
-      ])
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayOptions('view', [
-        'type' => 'text_default',
-        'label' => 'above',
-        'weight' => 3,
-      ])
-      ->setDisplayConfigurable('view', TRUE);
-
     // Enabled.
     $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Status'))
@@ -155,7 +152,6 @@ final class CustomEntityTypes extends ContentEntityBase implements CustomEntityT
         ],
       ])
       ->setDisplayConfigurable('view', TRUE);
-
     // Author.
     $fields['uid'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Author'))
@@ -177,7 +173,6 @@ final class CustomEntityTypes extends ContentEntityBase implements CustomEntityT
         'weight' => 15,
       ])
       ->setDisplayConfigurable('view', TRUE);
-
     // Authored on.
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Authored on'))
