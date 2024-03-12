@@ -28,6 +28,8 @@ Activate the `advanced_view` module from drupal admin
 
 - Total views, Views today, Comment count per each article/ pages has been added as part of statistics. Core `statistics` module needs to be enabled for this
 
+- To get the statistics fields in view , have to enable `Count content views` Configuration in from `admin > Configuration > System > statistics`.
+
 - Added Header text to the view as total published article count , total unpublished article count utilizing the `hook_views_pre_view` hook.
 
 - The access is controlled by a custom access plugin (`AdvancedViewAccess`) which is configured in the view's `Page settings` section. The access will be allowed only to the permission defined (`advanced_view.access`) users.
