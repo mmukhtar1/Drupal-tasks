@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace Drupal\custom_block_plugin\Service;
 
-use Drupal\Core\Logger\LoggerChannelFactory;
+use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * Service Class to get Stock market data from external API.
  */
 class StockMarketService {
-
+  use StringTranslationTrait;
   /**
    * The http client.
    *
@@ -23,7 +25,7 @@ class StockMarketService {
   /**
    * Logger Factory.
    *
-   * @var \Drupal\Core\Logger\LoggerChannelFactory
+   * @var \Drupal\Core\Logger\LoggerChannelInterface
    */
   protected $loggerFactory;
 
@@ -44,7 +46,7 @@ class StockMarketService {
    * @param \Drupal\Core\Messenger\Messenger $messenger
    *   Messenger Object.
    */
-  public function __construct(ClientInterface $client, LoggerChannelFactory $loggerFactory, MessengerInterface $messenger) {
+  public function __construct(ClientInterface $client, LoggerChannelInterface $loggerFactory, MessengerInterface $messenger) {
     $this->client = $client;
     $this->loggerFactory = $loggerFactory->get('custom_block_plugin');
     $this->messenger = $messenger;
@@ -58,7 +60,8 @@ class StockMarketService {
    * @param string $endpoint
    *   Endpoint URL.
    *
-   * @var \GuzzleHttp\Message\Response $result
+   * @return \GuzzleHttp\Message\Response
+   *   Return API result
    */
   public function getStockMarketData($api_key, $endpoint) {
     $request = $this->client->get(
@@ -82,8 +85,8 @@ class StockMarketService {
         $this->loggerFactory->notice("No data found!");
       }
     }
-    catch (\Exception $e) {
-      $this->messenger->addMessage(t("Could not retrieve the data: @message", ['@message' => $e->getMessage()]), 'error');
+    catch (GuzzleException $e) {
+      $this->messenger->addError($this->t("Could not retrieve the data: @message", ['@message' => $e->getMessage()]), 'error');
     }
   }
 

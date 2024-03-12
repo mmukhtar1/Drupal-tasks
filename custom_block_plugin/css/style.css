@@ -4,21 +4,20 @@
   width: 50%;
 }
 
-#stock-table td,
-#stock-table th {
+td,th {
   border: 2px solid black;
   padding: 8px;
 }
 
-#stock-table tr:nth-child(even) {
+tr:nth-child(even) {
   background-color: #f2f2f2;
 }
 
-#stock-table tr:hover {
+tr:hover {
   background-color: #ddd;
 }
 
-#stock-table th {
+th {
   padding-top: 12px;
   padding-bottom: 12px;
   text-align: left;
@@ -26,15 +25,14 @@
   color: white;
 }
 
-#stock-table td,
-#stock-table thead tr th {
+td,thead tr th {
   text-align: center;
   vertical-align: middle;
 }
-#stock-table thead tr th .up_arrow {
+
+thead tr th .up_arrow, thead tr th .down_arrow{
   width: 0;
   height: 0;
-  border-bottom: 10px solid green;
   border-right: 10px solid transparent;
   border-left: 10px solid transparent;
   font-size: 0;
@@ -42,13 +40,9 @@
   float: right;
 }
 
-#stock-table thead tr th .down_arrow {
-  width: 0;
-  height: 0;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
+thead tr th .up_arrow{
+  border-bottom: 10px solid green;
+}
+thead tr th .down_arrow{
   border-top: 10px solid red;
-  font-size: 0;
-  line-height: 0;
-  float: right;
 }

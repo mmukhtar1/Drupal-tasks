@@ -13,21 +13,21 @@
             <th>{{ 'Date'|t }}</th>
         </tr>
     </thead>
-    {% for key,item in json_data %}
     <tbody>
+    {% for key,item in json_data %}
         <tr>
             <td><b>{{ key }}</b></td>
-            <td>{{ item.meta.symbol }}</td>
+            <td>{{ item.meta.symbol|t }}</td>
             <td>{{ item.meta.currency ?? item.meta.currency_base}}</td>
-            <td>{{ item.meta.type }}</td>
-            <td>{{ item.values.0.open }}</td>
-            <td>{{ item.values.0.high }}</td>
-            <td>{{ item.values.0.low }}</td>
-            <td>{{ item.values.0.close }}</td>
-            <td>{{ item.values.0.datetime }}</td>
+            <td>{{ item.meta.type|t }}</td>
+            <td>{{ item.values.0.open|t }}</td>
+            <td>{{ item.values.0.high|t }}</td>
+            <td>{{ item.values.0.low|t }}</td>
+            <td>{{ item.values.0.close|t }}</td>
+            <td>{{ item.values.0.datetime|t }}</td>
         </tr>
-    </tbody>
     {% endfor %}
+    </tbody>
 </table>
 
 {% else %}
