@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 use Drupal\Core\Cache\Cache;
 use Drupal\node\NodeInterface;
+use Drupal\Core\Cache\CacheBackendInterface;
 
 /**
  * @file
@@ -19,7 +20,7 @@ use Drupal\node\NodeInterface;
  * Get the published/ unpublished article count.
  *
  * @return int
- *   Returns the count
+ *   Returns the pubished/ unpublished count
  */
 function advanced_view_get_article_count($type, $status) {
   if (\Drupal::cache()->get('article_count_' . $status)) {
@@ -33,10 +34,10 @@ function advanced_view_get_article_count($type, $status) {
       ->condition('type', $type);
     $query_articles->accessCheck(TRUE);
     $count = $query_articles->count()->execute();
-    $cache_tags = ['invalidate_article_publish_upublish'];
+    $cache_tags = ['node_list:article'];
     // Caching given as 3600 (1 hour)
-    // CacheBackendInterface::CACHE_PERMANENT.
-    Drupal::cache()->set('article_count_' . $status, $count, 3600, $cache_tags);
+    // CacheBackendInterface::CACHE_PERMANENT for permananent caching.
+    \Drupal::cache()->set('article_count_' . $status, $count, 3600, $cache_tags);
     return $count;
   }
 }
@@ -57,9 +58,9 @@ function advanced_view_preprocess_views_view(&$variables) {
  *
  * Invalidate Node published or unpublished tag to invalidate the cache.
  */
-function advanced_view_node_presave(NodeInterface $node) {
-  if (!$node->isNew() && $node->getType() == 'article') {
-    Cache::invalidateTags(['invalidate_article_publish_upublish']);
-  }
+// function advanced_view_node_presave(NodeInterface $node) {
+//   if (!$node->isNew() && $node->getType() == 'article') {
+//     Cache::invalidateTags(['invalidate_article_publish_upublish']);
+//   }
 
-}
+// }
